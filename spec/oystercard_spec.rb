@@ -19,16 +19,16 @@ describe Oystercard do
     expect{ subject.deduct 1 }.to change{ subject.balance }.by -1
   end
 
-  it 'lets you touch in' do
-    expect(subject).to respond_to(:touch_in)
+  describe 'lets you touch in' do
+    specify { expect(subject.touch_in).to be_truthy }
   end
 
-  it 'know when your on a journey' do
-    expect(subject.in_journey?).to eq true
+  describe 'in_journey?' do
+    specify { expect(subject.in_journey?).not_to be_truthy }
   end
 
-  it 'lets you touch out' do
-    expect(subject).to respond_to(:touch_out)
+  describe 'lets you touch out' do
+    specify { expect(subject.touch_out).not_to be_truthy }
   end
 
 end
