@@ -18,4 +18,17 @@ describe Oystercard do
   it 'lets you deduct from card' do
     expect{ subject.deduct 1 }.to change{ subject.balance }.by -1
   end
+
+  it 'lets you touch in' do
+    expect(subject).to respond_to(:touch_in)
+  end
+
+  it 'know when your on a journey' do
+    expect(subject.in_journey?).to eq true
+  end
+
+  it 'lets you touch out' do
+    expect(subject).to respond_to(:touch_out)
+  end
+
 end
