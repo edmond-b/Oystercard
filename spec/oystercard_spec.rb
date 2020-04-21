@@ -29,6 +29,17 @@ describe Oystercard do
     end
   end
 
+  context 'it has low or no balance' do
+    before(:all) do
+      subject.top_up(Oystercard::MIN_BALANCE)
+
+      it 'throws an error if isufficient funds' do
+        min_balance = Oystercard::MIN_BALANCE
+        expect{ subject.touch_in }.to raise_error("Insufficient funds")
+      end
+    end
+  end
+
   describe 'in_journey?' do
     specify { expect(subject.in_journey?).not_to be_truthy }
   end
