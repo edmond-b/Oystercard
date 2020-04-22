@@ -6,13 +6,6 @@ describe Oystercard do
     expect(subject.history).to be_empty
   end
 
-  let(:station){ double :station }
-  it 'remembers the entry station' do
-    subject.top_up(10)
-    subject.touch_in(station)
-    expect(subject.entry_station).to eq station
-  end
-
   it 'Has a initial balance of 0' do
     expect(subject.balance).to eq 0
   end
@@ -31,6 +24,20 @@ describe Oystercard do
     before(:all) do
       subject.top_up(Oystercard::MAX_BALANCE)
 
+      let(:station){ double :station }
+      it 'remembers the entry station' do
+        subject.touch_in(station)
+        expect(subject.entry_station).to eq station
+      end
+
+      it 'deducts money when you touch out' do
+        expect { subject.touch_out(station) }.to change{ subject.balance }.by -Oystercard::MIN_CHARGE
+      end
+
+      describe 'lets you touch out' do
+        specify { expect(subject.touch_out(station)).not_to be_truthy }
+      end
+
      it 'lets you touch in' do
         specify { expect(subject.touch_in).to be_truthy }
       end
@@ -41,11 +48,11 @@ describe Oystercard do
     before(:all) do
       subject.top_up(Oystercard::MIN_CHARGE)
 
+      let(:journey) {{entry_station: entry_station, exit_station: exit_station}}
       it 'store the journey' do
         subject.touch_in('entry')
         subject.touch_out('exit')
-        expect(history).to have_key(:entry)
-        expect(history).to have_value(:exit)
+        expect(subject.history).to include(:journey)
       end
 
       it 'throws an error if isufficient funds' do
@@ -58,13 +65,4 @@ describe Oystercard do
   describe 'in_journey?' do
     specify { expect(subject.in_journey?).not_to be_truthy }
   end
-
-  describe 'lets you touch out' do
-    specify { expect(subject.touch_out(station)).not_to be_truthy }
-  end
-
-  it 'deducts money when you touch out' do
-    expect { subject.touch_out(station) }.to change{ subject.balance }.by -Oystercard::MIN_CHARGE
-  end
-
 end
